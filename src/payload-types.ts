@@ -74,7 +74,7 @@ export interface Config {
     reviews: Review;
     customers: Customer;
     appointments: Appointment;
-    siteSettings: SiteSetting;
+    pages: Page;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -89,7 +89,7 @@ export interface Config {
     reviews: ReviewsSelect<false> | ReviewsSelect<true>;
     customers: CustomersSelect<false> | CustomersSelect<true>;
     appointments: AppointmentsSelect<false> | AppointmentsSelect<true>;
-    siteSettings: SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -99,8 +99,16 @@ export interface Config {
     defaultIDType: string;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    navbar: Navbar;
+    footer: Footer;
+    siteSettings: SiteSetting;
+  };
+  globalsSelect: {
+    navbar: NavbarSelect<false> | NavbarSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
+    siteSettings: SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+  };
   locale: null;
   user: User & {
     collection: 'users';
@@ -258,43 +266,83 @@ export interface Appointment {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "siteSettings".
+ * via the `definition` "pages".
  */
-export interface SiteSetting {
+export interface Page {
   id: string;
-  siteName?: string | null;
-  tagline?: string | null;
-  logo?: (string | null) | Media;
-  favicon?: (string | null) | Media;
-  theme?: {
-    primaryColor?: string | null;
-    secondaryColor?: string | null;
-    background?: string | null;
-    textColor?: string | null;
-  };
-  seo?: {
-    defaultTitle?: string | null;
-    ogImage?: (string | null) | Media;
-    indexingEnabled?: boolean | null;
-  };
-  contact?: {
-    phone?: string | null;
-    email?: string | null;
-    address?: string | null;
-    whatsapp?: string | null;
-  };
-  socials?:
+  title: string;
+  /**
+   * URL-friendly identifier for the page
+   */
+  slug: string;
+  /**
+   * Add and arrange blocks to build your page layout
+   */
+  layout: (
     | {
-        platform?: string | null;
-        url?: string | null;
+        title: string;
+        subtitle?: string | null;
+        /**
+         * The background image for the hero section
+         */
+        backgroundImage?: (string | null) | Media;
         id?: string | null;
-      }[]
-    | null;
-  booking?: {
-    enabled?: boolean | null;
-    slotDuration?: number | null;
-    openHours?: string | null;
-  };
+        blockName?: string | null;
+        blockType: 'hero';
+      }
+    | {
+        /**
+         * Add rich text content
+         */
+        richText: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'text';
+      }
+    | {
+        title: string;
+        /**
+         * Select services to display in this section
+         */
+        services: (string | Service)[];
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'services-block';
+      }
+    | {
+        title: string;
+        /**
+         * Select reviews to display in this section
+         */
+        reviews: (string | Review)[];
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'reviews-block';
+      }
+    | {
+        title: string;
+        description?: string | null;
+        buttonText: string;
+        buttonLink: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'cta';
+      }
+  )[];
   updatedAt: string;
   createdAt: string;
 }
@@ -351,8 +399,8 @@ export interface PayloadLockedDocument {
         value: string | Appointment;
       } | null)
     | ({
-        relationTo: 'siteSettings';
-        value: string | SiteSetting;
+        relationTo: 'pages';
+        value: string | Page;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -518,6 +566,277 @@ export interface AppointmentsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  layout?:
+    | T
+    | {
+        hero?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              backgroundImage?: T;
+              id?: T;
+              blockName?: T;
+            };
+        text?:
+          | T
+          | {
+              richText?: T;
+              id?: T;
+              blockName?: T;
+            };
+        'services-block'?:
+          | T
+          | {
+              title?: T;
+              services?: T;
+              id?: T;
+              blockName?: T;
+            };
+        'reviews-block'?:
+          | T
+          | {
+              title?: T;
+              reviews?: T;
+              id?: T;
+              blockName?: T;
+            };
+        cta?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              buttonText?: T;
+              buttonLink?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-kv_select".
+ */
+export interface PayloadKvSelect<T extends boolean = true> {
+  key?: T;
+  data?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-locked-documents_select".
+ */
+export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
+  document?: T;
+  globalSlug?: T;
+  user?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-preferences_select".
+ */
+export interface PayloadPreferencesSelect<T extends boolean = true> {
+  user?: T;
+  key?: T;
+  value?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-migrations_select".
+ */
+export interface PayloadMigrationsSelect<T extends boolean = true> {
+  name?: T;
+  batch?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navbar".
+ */
+export interface Navbar {
+  id: string;
+  /**
+   * Gestion de los links de navegación
+   */
+  navigationLinks?:
+    | {
+        label: string;
+        link: string;
+        isSection: boolean;
+        isModal: boolean;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: string;
+  description: string;
+  /**
+   * Add social media links
+   */
+  socialLinks?:
+    | {
+        platform: 'facebook' | 'instagram' | 'twitter' | 'linkedin' | 'youtube' | 'tiktok';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "siteSettings".
+ */
+export interface SiteSetting {
+  id: string;
+  /**
+   * The name of your website
+   */
+  siteName: string;
+  /**
+   * A short tagline or motto for your business
+   */
+  tagline?: string | null;
+  /**
+   * Main logo used across the site
+   */
+  logo: string | Media;
+  /**
+   * Browser tab icon (preferably 32x32px)
+   */
+  favicon?: (string | null) | Media;
+  theme?: {
+    /**
+     * Primary brand color (hex format)
+     */
+    primaryColor?: string | null;
+    /**
+     * Secondary brand color (hex format)
+     */
+    secondaryColor?: string | null;
+    /**
+     * Default background color
+     */
+    background?: string | null;
+    /**
+     * Default text color
+     */
+    textColor?: string | null;
+  };
+  seo?: {
+    /**
+     * Used as the default title tag on pages without a specific title
+     */
+    defaultTitle?: string | null;
+    /**
+     * Default Open Graph image for social sharing (1200x630px recommended)
+     */
+    ogImage?: (string | null) | Media;
+    /**
+     * Allow search engines to index your website
+     */
+    indexingEnabled?: boolean | null;
+  };
+  contact: {
+    /**
+     * Primary phone number for customer inquiries
+     */
+    phone: string;
+    /**
+     * Primary contact email
+     */
+    email: string;
+    /**
+     * Your physical business location
+     */
+    address: string;
+    /**
+     * WhatsApp number for customer contact
+     */
+    whatsapp?: string | null;
+  };
+  /**
+   * Add social media profiles linked from your site
+   */
+  socials?:
+    | {
+        platform: 'facebook' | 'instagram' | 'twitter' | 'linkedin' | 'youtube' | 'tiktok' | 'pinterest';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  booking?: {
+    /**
+     * Enable or disable the booking system
+     */
+    enabled?: boolean | null;
+    /**
+     * Duration of each booking slot in minutes
+     */
+    slotDuration?: number | null;
+    /**
+     * Display your business hours
+     */
+    openHours?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navbar_select".
+ */
+export interface NavbarSelect<T extends boolean = true> {
+  navigationLinks?:
+    | T
+    | {
+        label?: T;
+        link?: T;
+        isSection?: T;
+        isModal?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  description?: T;
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "siteSettings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
@@ -564,46 +883,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-kv_select".
- */
-export interface PayloadKvSelect<T extends boolean = true> {
-  key?: T;
-  data?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-locked-documents_select".
- */
-export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
-  document?: T;
-  globalSlug?: T;
-  user?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-preferences_select".
- */
-export interface PayloadPreferencesSelect<T extends boolean = true> {
-  user?: T;
-  key?: T;
-  value?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-migrations_select".
- */
-export interface PayloadMigrationsSelect<T extends boolean = true> {
-  name?: T;
-  batch?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
