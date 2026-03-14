@@ -1,7 +1,7 @@
 import type { Block } from 'payload'
 
 export const ServicesBlock: Block = {
-  slug: 'services-block',
+  slug: 'service-block',
   labels: {
     singular: 'Services Block',
     plural: 'Services Blocks',
@@ -12,7 +12,15 @@ export const ServicesBlock: Block = {
       type: 'text',
       required: true,
       admin: {
-        placeholder: 'Enter section title',
+        placeholder: 'Ingrese el titulo de la sección',
+      },
+    },
+    {
+      name: 'subtitle',
+      type: 'text',
+      required: true,
+      admin: {
+        placeholder: 'Ingrese el subtitulo de la sección',
       },
     },
     {
@@ -22,7 +30,7 @@ export const ServicesBlock: Block = {
       hasMany: true,
       required: true,
       admin: {
-        description: 'Select services to display in this section',
+        description: 'Seleccione los servicios que apareceran en la sección',
       },
     },
   ],

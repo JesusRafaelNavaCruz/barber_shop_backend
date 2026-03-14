@@ -1,9 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { Hero } from '../blocks/Hero'
-import { Text } from '../blocks/Text'
 import { ServicesBlock } from '../blocks/Services'
 import { ReviewsBlock } from '../blocks/Reviews'
-import { CTA } from '../blocks/CTA'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -37,7 +35,7 @@ export const Pages: CollectionConfig = {
     {
       name: 'layout',
       type: 'blocks',
-      blocks: [Hero, Text, ServicesBlock, ReviewsBlock, CTA],
+      blocks: [Hero, ServicesBlock],
       required: true,
       admin: {
         description: 'Add and arrange blocks to build your page layout',

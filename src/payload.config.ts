@@ -13,6 +13,7 @@ import { Reviews } from './collections/Reviews'
 import { Customers } from './collections/Customers'
 import { Appointments } from './collections/Appointments'
 import { Pages } from './collections/Pages'
+import { Gallery } from './collections/Gallery'
 import { Navbar } from './globals/Navbar'
 import { Footer } from './globals/Footer'
 import { SiteSettings } from './globals/SiteSettings'
@@ -28,7 +29,7 @@ export default buildConfig({
     },
   },
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000',
-  collections: [Users, Media, Services, Staff, Reviews, Customers, Appointments, Pages],
+  collections: [Users, Media, Services, Staff, Reviews, Customers, Appointments, Pages, Gallery],
   globals: [Navbar, Footer, SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

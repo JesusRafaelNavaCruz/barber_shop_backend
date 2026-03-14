@@ -75,6 +75,7 @@ export interface Config {
     customers: Customer;
     appointments: Appointment;
     pages: Page;
+    gallery: Gallery;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -90,6 +91,7 @@ export interface Config {
     customers: CustomersSelect<false> | CustomersSelect<true>;
     appointments: AppointmentsSelect<false> | AppointmentsSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    gallery: GallerySelect<false> | GallerySelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -280,69 +282,76 @@ export interface Page {
    */
   layout: (
     | {
+        /**
+         * Small text label above the title
+         */
+        badge: string;
+        /**
+         * Main hero title (supports line breaks)
+         */
         title: string;
-        subtitle?: string | null;
+        /**
+         * The text that will be colored in red
+         */
+        highlightedText: string;
+        /**
+         * Main description text
+         */
+        description: string;
         /**
          * The background image for the hero section
          */
-        backgroundImage?: (string | null) | Media;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'hero';
-      }
-    | {
-        /**
-         * Add rich text content
-         */
-        richText: {
-          root: {
-            type: string;
-            children: {
-              type: any;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
+        backgroundImage: string | Media;
+        buttons?: {
+          /**
+           * Primary CTA button text
+           */
+          primaryButtonText?: string | null;
+          /**
+           * Primary CTA button text for mobile
+           */
+          primaryButtonShortText?: string | null;
+          /**
+           * Secondary button text
+           */
+          secondaryButtonText?: string | null;
+          /**
+           * Secondary button text for mobile
+           */
+          secondaryButtonShortText?: string | null;
         };
+        /**
+         * Select services to display in the hero section (optional)
+         */
+        services?: (string | Service)[] | null;
         id?: string | null;
         blockName?: string | null;
-        blockType: 'text';
+        blockType: 'hero-block';
       }
     | {
         title: string;
+        subtitle: string;
         /**
-         * Select services to display in this section
+         * Seleccione los servicios que apareceran en la sección
          */
         services: (string | Service)[];
         id?: string | null;
         blockName?: string | null;
-        blockType: 'services-block';
-      }
-    | {
-        title: string;
-        /**
-         * Select reviews to display in this section
-         */
-        reviews: (string | Review)[];
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'reviews-block';
-      }
-    | {
-        title: string;
-        description?: string | null;
-        buttonText: string;
-        buttonLink: string;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'cta';
+        blockType: 'service-block';
       }
   )[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gallery".
+ */
+export interface Gallery {
+  id: string;
+  title: string;
+  image: string | Media;
+  tags?: ('cortes' | 'barberia' | 'estilo' | 'clientes' | 'antes-despues')[] | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -401,6 +410,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: string | Page;
+      } | null)
+    | ({
+        relationTo: 'gallery';
+        value: string | Gallery;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -574,49 +587,47 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
-        hero?:
+        'hero-block'?:
           | T
           | {
+              badge?: T;
               title?: T;
-              subtitle?: T;
+              highlightedText?: T;
+              description?: T;
               backgroundImage?: T;
-              id?: T;
-              blockName?: T;
-            };
-        text?:
-          | T
-          | {
-              richText?: T;
-              id?: T;
-              blockName?: T;
-            };
-        'services-block'?:
-          | T
-          | {
-              title?: T;
+              buttons?:
+                | T
+                | {
+                    primaryButtonText?: T;
+                    primaryButtonShortText?: T;
+                    secondaryButtonText?: T;
+                    secondaryButtonShortText?: T;
+                  };
               services?: T;
               id?: T;
               blockName?: T;
             };
-        'reviews-block'?:
+        'service-block'?:
           | T
           | {
               title?: T;
-              reviews?: T;
-              id?: T;
-              blockName?: T;
-            };
-        cta?:
-          | T
-          | {
-              title?: T;
-              description?: T;
-              buttonText?: T;
-              buttonLink?: T;
+              subtitle?: T;
+              services?: T;
               id?: T;
               blockName?: T;
             };
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gallery_select".
+ */
+export interface GallerySelect<T extends boolean = true> {
+  title?: T;
+  image?: T;
+  tags?: T;
   updatedAt?: T;
   createdAt?: T;
 }
