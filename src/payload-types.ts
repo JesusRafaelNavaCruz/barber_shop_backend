@@ -207,6 +207,13 @@ export interface Staff {
   speciality?: string | null;
   photo?: (string | null) | Media;
   services?: (string | null) | Service;
+  socials?:
+    | {
+        platform: 'facebook' | 'instagram' | 'twitter' | 'linkedin' | 'youtube' | 'tiktok' | 'pinterest';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
   active?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -338,6 +345,28 @@ export interface Page {
         id?: string | null;
         blockName?: string | null;
         blockType: 'service-block';
+      }
+    | {
+        title: string;
+        subtitle: string;
+        /**
+         * Personal del negocio
+         */
+        staff: (string | Staff)[];
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'staff-block';
+      }
+    | {
+        title: string;
+        subtitle: string;
+        /**
+         * Imagenes de galeria
+         */
+        gallery: (string | Gallery)[];
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'gallery-block';
       }
   )[];
   updatedAt: string;
@@ -521,6 +550,13 @@ export interface StaffSelect<T extends boolean = true> {
   speciality?: T;
   photo?: T;
   services?: T;
+  socials?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
   active?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -613,6 +649,24 @@ export interface PagesSelect<T extends boolean = true> {
               title?: T;
               subtitle?: T;
               services?: T;
+              id?: T;
+              blockName?: T;
+            };
+        'staff-block'?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              staff?: T;
+              id?: T;
+              blockName?: T;
+            };
+        'gallery-block'?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              gallery?: T;
               id?: T;
               blockName?: T;
             };
